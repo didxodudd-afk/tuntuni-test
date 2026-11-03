@@ -63,6 +63,16 @@ a{color:var(--teal)}
 .leaflet-div-icon{background:transparent;border:0}
 .video{aspect-ratio:16/9;width:100%;border:0;border-radius:14px;background:var(--surface-2);display:grid;place-items:center;text-align:center;padding:12px;font-size:14px;color:var(--muted)}
 .moves{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+/* 컴퓨터 화면: 지도를 크게, 장소 목록은 옆으로 */
+@media (min-width:900px){
+  .app{max-width:1100px}
+  .draft,#s-place,#s-ask,#s-spot{width:100%;max-width:560px;align-self:center}
+  #s-map{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:12px 16px;align-items:start}
+  #s-map > .back,#s-map > h2,#map-note{grid-column:1 / -1}
+  #s-map > .back{justify-self:start}
+  #map{height:min(620px,calc(100vh - 230px));min-height:420px}
+  #spot-list{max-height:min(620px,calc(100vh - 230px));overflow-y:auto}
+}
 </style>
 </head>
 <body>
@@ -197,7 +207,7 @@ function renderSpots(note, warn){
       S.pins.push(pin);
     }
   });
-  if(S.map && S.me) S.map.fitBounds(L.latLngBounds([S.me, ...SPOTS.map(s => [s.lat, s.lng])]).pad(.15));
+  if(S.map && S.me) S.map.fitBounds(L.latLngBounds([S.me, ...SPOTS.map(s => [s.lat, s.lng])]).pad(.15), {animate:false});
 }
 function openSpot(s){
   const k = KIND[s.kind];
@@ -229,7 +239,11 @@ function pickOnMap(){
   S.me = null;
   if(S.meMarker){ S.meMarker.remove(); S.meMarker = null; }
   openMap();
-  if(S.map) S.map.setView(CENTER, 15);
+  /* 화면 크기가 정해진 뒤에 맞춰야 장소가 모두 들어와요 */
+  if(S.map) setTimeout(() => {
+    S.map.invalidateSize();
+    S.map.fitBounds(L.latLngBounds(SPOTS.map(s => [s.lat, s.lng])).pad(.25), {animate:false});
+  }, 50);
   renderSpots(window.L ? '지도에서 지금 있는 곳을 눌러 보세요. 가까운 순서로 알려 줄게요.' : '지도를 불러오지 못했어요. 인터넷 연결을 확인해 주세요. 장소 목록은 아래에서 볼 수 있어요.', !window.L);
 }
 const GEO_ERR = {
@@ -251,7 +265,11 @@ function useGps(){
     const pos = [p.coords.latitude, p.coords.longitude];
     openMap();
     const far = meters(pos, CENTER) > FAR_M, rough = p.coords.accuracy > ROUGH_M;
-    if(far) setMe(pos, '율곡동에서 멀리 있어요. 지금 위치가 맞지 않다면 지도에서 있는 곳을 눌러 주세요.', true);
+    /* 컴퓨터는 위치가 수십 km 어긋날 수 있어요. 먼 위치에 지도를 맞추면 핀이 한 점에 몰려서, 율곡동을 그대로 보여 줘요 */
+    if(far){
+      pickOnMap();
+      renderSpots('찾은 위치가 율곡동에서 멀어요. 컴퓨터는 위치가 크게 어긋날 수 있어요. 지도에서 지금 있는 곳을 눌러 주세요.', true);
+    }
     else if(rough) setMe(pos, '위치가 정확하지 않을 수 있어요. 틀리면 지도에서 있는 곳을 눌러 주세요.', true);
     else setMe(pos, '내 위치에서 가까운 순서예요. 틀리면 지도에서 있는 곳을 눌러 주세요.');
   }, e => {
