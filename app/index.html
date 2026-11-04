@@ -9,23 +9,27 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* Layout: phone-first single column app; challenge mode widens to camera + guide side by side */
+/* 색: 튼튼이 365 메인 그림(하늘색 배경, 남색 제목, 초록 365, 파란 버튼)에 맞춤 */
 :root{
-  --bg:#EDF3F0; --surface:#FFFFFF; --surface-2:#E1EBE6; --ink:#17302A; --muted:#566D66; --line:#CFDDD7;
-  --accent:#F2643D; --accent-ink:#FFFFFF; --accent-soft:#FDE2D9;
-  --teal:#16806A; --teal-soft:#D5EDE5; --sun:#E9A817; --sun-soft:#FDF0CC; --warn:#B4541F;
+  --bg:#EEF5FC; --surface:#FFFFFF; --surface-2:#E3EDF8; --ink:#1B2F55; --muted:#5B6A82; --line:#D3E0EE;
+  --accent:#2F5FD0; --accent-ink:#FFFFFF; --accent-soft:#DCE6FB;
+  --teal:#1F9D57; --teal-soft:#D6F1E1; --sun:#E9A817; --sun-soft:#FDF0CC; --warn:#B4541F;
+  --navy:#1F3F7A; --sky-1:#F7FBFF; --sky-2:#D9E9FA; --hill:#C7DDF5; --deco:#A9CBF0; --glow:#FFFFFF; --leaf:#4DB565;
   --display:"Jua","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#101816; --surface:#18231F; --surface-2:#22302B; --ink:#E5F0EB; --muted:#9AB2AA; --line:#2C3D37;
-  --accent:#FF7A55; --accent-ink:#1A0E09; --accent-soft:#3D2620;
-  --teal:#3FBF9C; --teal-soft:#1D3A32; --sun:#F7C24A; --sun-soft:#3A3120; --warn:#F09A6B; color-scheme:dark;
+  --bg:#0E1626; --surface:#16213A; --surface-2:#1F2C48; --ink:#E6EEFA; --muted:#9CB0CF; --line:#2A3A5C;
+  --accent:#6F9BFF; --accent-ink:#0B1530; --accent-soft:#1F2E55;
+  --teal:#4CC88A; --teal-soft:#173B2B; --sun:#F7C24A; --sun-soft:#3A3120; --warn:#F09A6B;
+  --navy:#BFD3FF; --sky-1:#1A2A48; --sky-2:#12203A; --hill:#1E3358; --deco:#3D5A88; --glow:#24375C; --leaf:#3E9A57; color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#101816; --surface:#18231F; --surface-2:#22302B; --ink:#E5F0EB; --muted:#9AB2AA; --line:#2C3D37;
-  --accent:#FF7A55; --accent-ink:#1A0E09; --accent-soft:#3D2620;
-  --teal:#3FBF9C; --teal-soft:#1D3A32; --sun:#F7C24A; --sun-soft:#3A3120; --warn:#F09A6B; color-scheme:dark;
+  --bg:#0E1626; --surface:#16213A; --surface-2:#1F2C48; --ink:#E6EEFA; --muted:#9CB0CF; --line:#2A3A5C;
+  --accent:#6F9BFF; --accent-ink:#0B1530; --accent-soft:#1F2E55;
+  --teal:#4CC88A; --teal-soft:#173B2B; --sun:#F7C24A; --sun-soft:#3A3120; --warn:#F09A6B;
+  --navy:#BFD3FF; --sky-1:#1A2A48; --sky-2:#12203A; --hill:#1E3358; --deco:#3D5A88; --glow:#24375C; --leaf:#3E9A57; color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -73,6 +77,28 @@ body.wide .app{max-width:1000px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
 .stat b{display:block;font-family:var(--display);font-weight:400;font-size:26px;font-variant-numeric:tabular-nums}
 .stat span{font-size:13px;color:var(--muted)}
+.mascot{height:auto;display:block}
+/* 첫 화면: 6-3 방패 + 제목, 곰돌이 장면, 메뉴 4칸, 시작 버튼 */
+.brand{display:flex;align-items:center;justify-content:center;gap:8px;padding-top:2px}
+.brand .crest{flex:none;width:64px;height:58px}
+.brand h1{font-size:36px;line-height:1.05;color:var(--navy)}
+.brand h1 em{font-style:normal;color:var(--teal);margin-left:6px}
+.brand p{font-size:13px;color:var(--muted);margin-top:3px}
+.homehead{display:flex;flex-direction:column}
+.scene{position:relative;border-radius:28px;overflow:hidden;background:linear-gradient(180deg,var(--sky-1),var(--sky-2));min-height:290px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-top:16px}
+.scene .deco{position:absolute;inset:0;width:100%;height:100%}
+.scene .bubble{z-index:1;margin-bottom:12px;max-width:88%}
+.scene .mascot{position:relative;z-index:1;width:min(230px,58%);transform-origin:50% 100%;animation:breathe 3s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.03) rotate(-1.5deg)}}
+.menu4{position:relative;z-index:2;margin:-14px 10px 0;background:var(--surface);border-radius:22px;box-shadow:0 8px 24px rgba(31,63,122,.13);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:14px 4px 40px}
+.menu4 button{border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--ink);padding:4px 2px;min-width:0;white-space:nowrap}
+.menu4 button + button{border-left:1px solid var(--line)}
+.menu4 .mi{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,currentColor 14%,transparent)}
+.menu4 .mi svg{width:26px;height:26px}
+.startpill{position:relative;z-index:3;margin:-27px auto 0;width:min(330px,86%);border:0;border-radius:99px;background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 82%,#fff),var(--accent));color:var(--accent-ink);font-family:var(--display);font-size:20px;padding:13px 18px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 40%,transparent)}
+.startpill:active{transform:translateY(2px)}
+.slogan{text-align:center;font-family:var(--display);font-size:17px;color:var(--navy)}
+@media (prefers-reduced-motion: reduce){.scene .mascot{animation:none}}
 
 /* check-in */
 .steps{display:flex;gap:6px}
@@ -544,21 +570,32 @@ const BADGES=[
 ];
 
 /* ---------- 그림 ---------- */
-function mascot(lv,size){
-  const leaf2=lv>=2?'<path d="M60 20 C70 7 82 11 79 20 C75 25 66 25 60 20Z" fill="var(--teal)"/>':'';
-  const flower=lv>=3?'<g><circle cx="60" cy="10" r="7" fill="var(--sun)"/><circle cx="60" cy="10" r="3" fill="var(--accent)"/></g>':'';
-  return `<svg width="${size}" height="${size}" viewBox="0 0 120 120" aria-label="튼튼이 레벨 ${lv}" role="img">
-  <path d="M60 34 V16" stroke="var(--teal)" stroke-width="4" stroke-linecap="round" fill="none"/>
-  <path d="M60 24 C50 11 38 15 41 24 C45 29 54 29 60 24Z" fill="var(--teal)"/>${leaf2}${flower}
-  <ellipse cx="22" cy="78" rx="9" ry="13" fill="var(--accent)" transform="rotate(-25 22 78)"/>
-  <ellipse cx="98" cy="78" rx="9" ry="13" fill="var(--accent)" transform="rotate(25 98 78)"/>
-  <ellipse cx="60" cy="74" rx="40" ry="38" fill="var(--accent)"/>
-  <ellipse cx="60" cy="86" rx="24" ry="17" fill="#FFFFFF" opacity=".28"/>
-  <circle cx="47" cy="67" r="5" fill="#2A1A14"/><circle cx="73" cy="67" r="5" fill="#2A1A14"/>
-  <circle cx="48.5" cy="65.5" r="1.6" fill="#FFFFFF"/><circle cx="74.5" cy="65.5" r="1.6" fill="#FFFFFF"/>
-  <circle cx="38" cy="78" r="5" fill="#FFFFFF" opacity=".35"/><circle cx="82" cy="78" r="5" fill="#FFFFFF" opacity=".35"/>
-  <path d="M51 79 Q60 87 69 79" stroke="#2A1A14" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
-}
+/* 튼튼이 그림: 레벨별 파일. 디자이너 그림이 오면 img 폴더에 넣고 파일 이름을 적어요. 비어 있으면 아래 레벨 그림을 써요. */
+const MASCOT={1:'img/tuntuni_1.png', 2:'', 4:'', 6:'', 10:''};
+function mascotSrc(lv){ let s=MASCOT[1]; [2,4,6,10].forEach(k=>{ if(lv>=k&&MASCOT[k]) s=MASCOT[k]; }); return s; }
+function mascot(lv,size){ return `<img class="mascot" src="${mascotSrc(lv)}" width="${size}" alt="튼튼이 레벨 ${lv}">`; }
+/* 6학년 3반 방패 */
+const CREST=`<svg class="crest" viewBox="0 0 80 72" role="img" aria-label="6학년 3반"><g fill="var(--leaf)">
+ <ellipse cx="11" cy="27" rx="3" ry="6.5" transform="rotate(15 11 27)"/><ellipse cx="8" cy="39" rx="3.2" ry="7" transform="rotate(-8 8 39)"/>
+ <ellipse cx="11" cy="51" rx="3.2" ry="7" transform="rotate(-35 11 51)"/><ellipse cx="20" cy="61" rx="3.2" ry="7" transform="rotate(-65 20 61)"/>
+ <ellipse cx="69" cy="27" rx="3" ry="6.5" transform="rotate(-15 69 27)"/><ellipse cx="72" cy="39" rx="3.2" ry="7" transform="rotate(8 72 39)"/>
+ <ellipse cx="69" cy="51" rx="3.2" ry="7" transform="rotate(35 69 51)"/><ellipse cx="60" cy="61" rx="3.2" ry="7" transform="rotate(65 60 61)"/></g>
+ <path d="M40 4 L62 11 V30 C62 46 52 58 40 66 C28 58 18 46 18 30 V11 Z" fill="#1F3F7A" stroke="#fff" stroke-width="2.5"/>
+ <path d="M40 12 l2 4.2 4.6.6-3.3 3.2.8 4.6-4.1-2.2-4.1 2.2.8-4.6-3.3-3.2 4.6-.6z" fill="#fff"/>
+ <text x="40" y="47" text-anchor="middle" font-family="Jua, sans-serif" font-size="17" fill="#fff">6-3</text></svg>`;
+const brand=()=>`<header class="brand">${CREST}<div><h1>튼튼이<em>365</em></h1><p>건강한 생활 습관, 매일 365일 함께해요!</p></div></header>`;
+/* 곰돌이 뒤 배경: 운동화, 심장, 물병, 반짝이, 언덕, 풀잎 */
+const SCENE_DECO=`<svg class="deco" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+ <circle cx="200" cy="215" r="120" fill="var(--glow)" opacity=".6"/>
+ <path d="M0 252 Q60 218 120 242 T240 236 T400 232 V300 H0Z" fill="var(--hill)"/>
+ <g fill="none" stroke="var(--deco)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="translate(0 30)"><path d="M42 112 l6-18 c8 4 14 6 22 4 l26 16 c10 6 4 14-6 14 H50 c-8 0-12-8-8-16z"/><path d="M60 104 l6 4 M68 100 l6 4"/></g>
+  <g transform="translate(4 56)"><path d="M322 98 c-14-10-24-18-24-30 0-8 6-14 13-14 5 0 9 3 11 7 2-4 6-7 11-7 7 0 13 6 13 14 0 12-10 20-24 30z"/><path d="M304 76 h8 l4-7 5 14 4-7 h9"/></g>
+  <path d="M332 176 h12 v8 c6 4 8 8 8 14 v34 c0 4-3 6-6 6 h-24 c-3 0-6-2-6-6 v-34 c0-6 2-10 8-14z"/></g>
+ <g fill="#fff"><path d="M86 190 l3 9 9 3-9 3-3 9-3-9-9-3 9-3z"/><path d="M300 130 l2.5 7 7 2.5-7 2.5-2.5 7-2.5-7-7-2.5 7-2.5z"/><path d="M296 226 l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></g>
+ <g fill="var(--leaf)"><path d="M28 300 C18 262 38 232 68 222 C70 252 58 282 42 300Z"/><path d="M58 300 C60 272 80 254 106 252 C100 276 86 294 70 300Z" opacity=".75"/>
+  <path d="M372 300 C382 262 362 232 332 222 C330 252 342 282 358 300Z"/><path d="M342 300 C340 272 320 254 294 252 C300 276 314 294 330 300Z" opacity=".75"/></g></svg>`;
+const scene=(msg,lv)=>`<section class="scene">${SCENE_DECO}<div class="bubble">${msg}</div>${mascot(lv,230)}</section>`;
 const FLAME='<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-2.5 1.2-4 2.5-5 .1 1.6.8 2.7 2 3 0-3 .2-6-.5-9z"/></svg>';
 const IC={
  neck:'<path d="M12 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM4 20c0-4 3-7 8-7s8 3 8 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M6 13l-2-2M18 13l2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
@@ -743,8 +780,9 @@ function viewGate(){
     </div>`;
     if(!F.name) document.getElementById('fName').focus(); return; }
   $view.innerHTML=`<div class="col">
-   <section class="hero"><div class="bubble">안녕! 나는 튼튼이야</div><div class="bob">${mascot(1,150)}</div>
-    <h2>튼튼이 365</h2><p class="muted">매일 조금씩 운동하고 튼튼이를 키워요.</p></section>
+   ${brand()}
+   ${scene('안녕! 나는 튼튼이야',1)}
+   <p class="muted" style="text-align:center">매일 조금씩 운동하고 튼튼이를 키워요.</p>
    <div class="opts">
     <button class="opt" data-act="gate" data-k="join"><span class="ic">${icon('join')}</span><span><b>처음이에요</b><small>이름을 등록하고 시작해요</small></span></button>
     <button class="opt" data-act="gate" data-k="login"><span class="ic">${icon('login')}</span><span><b>이어서 하기</b><small>등록한 이름으로 들어가 레벨을 이어 가요</small></span></button>
@@ -782,12 +820,17 @@ function viewHome(){
   const names=['일','월','화','수','목','금','토']; let week='';
   for(let i=6;i>=0;i--){const d=new Date(); d.setDate(d.getDate()-i); const on=S.history.includes(dkey(d));
     week+=`<div class="day ${i===0?'today':''}"><div class="dot ${on?'on':''}">${on?'<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10" stroke="#3A2A05" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><span>${i===0?'오늘':names[d.getDay()]}</span></div>`;}
+  const MENU=[['town','','우리 동네',IC.town,'#2F80ED'],['book','moves','동작 도감',TABS[2][2],'#F2643D'],
+              ['book','badges','내 배지','<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z" fill="currentColor"/>','#D99A0B'],['tree','','알고리즘',TABS[3][2],'#7B61FF']];
   $view.innerHTML=`<div class="col">
-   <section class="hero"><div class="bubble">${msg}</div><div class="bob">${mascot(level(),150)}</div>
-    <p class="muted">지금 내 몸 상태를 알려 주면<br>튼튼이가 딱 맞는 운동을 골라 줄게.</p></section>
+   ${brand()}
+   <div class="homehead">${scene(msg,level())}
+    <div class="menu4">${MENU.map(([k,b,l,svg,c])=>`<button data-act="tab" data-k="${k}" ${b?`data-b="${b}"`:''} style="color:${c}"><span class="mi"><svg viewBox="0 0 24 24" aria-hidden="true">${svg}</svg></span><span style="color:var(--ink)">${l}</span></button>`).join('')}</div>
+    <button class="startpill" data-act="start">${doneToday?'한 번 더 운동하기':'오늘의 체크인 시작'} <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+   </div>
    <div class="week" aria-label="최근 7일 운동 기록">${week}</div>
-   <button class="cta" data-act="start">${doneToday?'한 번 더 운동하기':'오늘의 체크인 시작'}</button>
    <div class="stats"><div class="stat"><b>${S.count}</b><span>운동한 횟수</span></div><div class="stat"><b>${S.verified}</b><span>카메라로 인증한 동작</span></div></div>
+   <p class="slogan">오늘도 한 걸음, 건강한 내일!</p>
    ${DEV.user.kind==='guest'?'<p class="note" style="text-align:center">손님 모드예요. 기록이 남지 않아요. 레벨을 이어 가려면 정보 탭에서 나가서 이름을 등록해 주세요.</p>':''}
   </div>`;
 }
@@ -1200,7 +1243,7 @@ function viewInfo(){
 let resetArmed=false;
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]'); if(!el||el.disabled) return; const a=el.dataset.act;
-  if(a==='tab'){ if(UI.screen==='play'){ stopPlay(); UI.screen='result'; } UI.tab=el.dataset.k; render(); window.scrollTo(0,0);
+  if(a==='tab'){ if(UI.screen==='play'){ stopPlay(); UI.screen='result'; } UI.tab=el.dataset.k; if(el.dataset.b) UI.book=el.dataset.b; render(); window.scrollTo(0,0);
     const tb=UI.tab; if((tb==='tree'||tb==='book')&&DEV.user.kind==='server') api('stats',{}).then(r=>{ if(r.ok){ UI.classFeel=r.feel; if(UI.tab===tb&&!UI.gate) render(); } });
     return; }
   if(a==='gps'){ useGps(); return; }
