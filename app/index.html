@@ -207,7 +207,7 @@ body.wide .app{max-width:1000px}
 .credit dd{margin:0;font-weight:500;min-width:0}
 .field{display:flex;flex-direction:column;gap:6px}
 .field label{font-weight:700;font-size:14px}
-.field input{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 13px;min-width:0}
+.field input,.field select{width:100%;color:inherit;font:inherit;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 13px;min-width:0}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tags span{background:var(--surface-2);border-radius:8px;padding:3px 9px;font-size:13px;font-weight:500}
 .tags span.base{background:var(--teal-soft);color:var(--teal)}
@@ -682,14 +682,20 @@ function vsNote(){
 
 /* ---------- 음성 안내 ---------- */
 const V={voice:null,ctx:null};
-function pickVoice(){ if(!('speechSynthesis' in window)) return; const vs=speechSynthesis.getVoices(); V.voice=vs.find(v=>v.lang&&v.lang.toLowerCase().startsWith('ko'))||null; }
-if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
-function say(text,interrupt){
-  if(!DEV.voice||!('speechSynthesis' in window)) return;
+/* 자연스러운 한국어 목소리부터 골라요: 엣지 "Natural" > 크롬 "Google 한국의" > 애플 향상된 목소리 > 그 밖의 한국어.
+   정보 탭에서 고른 목소리(DEV.voiceName)가 이 기기에 있으면 그것을 써요. */
+const koVoices=()=>('speechSynthesis' in window)?speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().replace('_','-').startsWith('ko')):[];
+const voiceScore=v=>{ const n=v.name; return (/Natural/i.test(n)?50:0)+(/Google/i.test(n)?40:0)+(/Premium|Enhanced|향상/i.test(n)?30:0)+(/Online/i.test(n)?10:0)+(/SunHi|선희|Yuna|유나/i.test(n)?5:0)-(/Heami/i.test(n)?10:0); };
+const bestVoice=()=>koVoices().sort((a,b)=>voiceScore(b)-voiceScore(a))[0]||null;
+function pickVoice(){ const vs=koVoices(); V.voice=(DEV.voiceName&&vs.find(v=>v.name===DEV.voiceName))||bestVoice(); }
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=()=>{ pickVoice(); if(typeof UI!=='undefined'&&UI.tab==='info'&&!UI.running&&!document.getElementById('voiceSel')) render(); }; }
+function speak(text,interrupt){
+  if(!('speechSynthesis' in window)) return;
   if(interrupt) speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text); u.lang='ko-KR'; if(V.voice) u.voice=V.voice; u.rate=1;
   speechSynthesis.speak(u);
 }
+function say(text,interrupt){ if(DEV.voice) speak(text,interrupt); }
 function initAudio(){ try{ if(!V.ctx) V.ctx=new (window.AudioContext||window.webkitAudioContext)(); if(V.ctx.state==='suspended') V.ctx.resume(); }catch(e){} }
 function beep(){
   if(!DEV.voice||!V.ctx) return;
@@ -1258,6 +1264,7 @@ ${Object.values(KIND).map(k=>`만약 종류 = ${k.label} → ${k.name}`).join('\
 /* ---------- 정보: 크레딧과 선생님 설정 ---------- */
 function viewInfo(){
   const linked=!!modelUrl()||Object.values(CONFIG.MODELS).some(Boolean), u=DEV.user;
+  const vs=koVoices().sort((a,b)=>voiceScore(b)-voiceScore(a)), best=vs[0];
   $view.innerHTML=`<div class="col">
    <div><p class="eyebrow">크레딧</p><h2>튼튼이 365를 만든 사람들</h2></div>
    <div class="card credit"><dl>
@@ -1283,11 +1290,19 @@ function viewInfo(){
      <p class="note">${linked?'연결됨. 도전 모드에서 카메라 인증을 사용해요.':'연결 안 됨. 도전 모드는 체험 모드로 실행돼요.'} 모든 기기에 적용하려면 파일의 CONFIG.MODEL_URL에 넣어 주세요.</p></div>
     <button class="ghost" data-act="saveInfo" id="saveBtn">저장</button>
    </div>`}
+   <div class="card"><h3>음성 안내 목소리</h3>
+    ${vs.length?`<div class="field"><label for="voiceSel">이 기기의 한국어 목소리</label><select id="voiceSel">${vs.map(v=>`<option value="${esc(v.name)}"${V.voice&&V.voice.name===v.name?' selected':''}>${esc(v.name)}${best&&v.name===best.name?' (추천)':''}${v.localService?'':' · 인터넷 필요'}</option>`).join('')}</select></div>
+    <button class="ghost" data-act="voiceTest">들어 보기</button>
+    <p class="note">목소리는 기기와 브라우저마다 달라요. 컴퓨터에서는 엣지의 "SunHi (Natural)", 크롬의 "Google 한국의"가 가장 자연스러워요. 고른 목소리는 이 기기에 저장돼요.</p>`
+    :'<p class="note">이 기기에서는 아직 한국어 목소리를 찾지 못했어요.</p>'}
+   </div>
    <div class="card"><h3>티처블 머신 클래스 이름</h3>
     <p class="muted" style="font-size:14px">모델을 만들 때 아래 이름과 똑같이 클래스를 만들어야 인증돼요.</p>
     <div class="tags"><span class="base">${esc(CONFIG.BASE_CLASS)}</span>${POSE_CLASSES.map(c=>`<span>${esc(c)}</span>`).join('')}</div></div>
    ${u.kind==='local'?'<button class="ghost" data-act="reset" id="resetBtn">내 기록 초기화</button>':''}
   </div>`;
+  const sel=document.getElementById('voiceSel');
+  if(sel) sel.onchange=()=>{ DEV.voiceName=sel.value; saveDev(); pickVoice(); speak('좋아요, 그대로 유지해요!',true); };
 }
 
 /* ---------- 이벤트 ---------- */
@@ -1329,6 +1344,7 @@ document.addEventListener('click',e=>{
     const m=document.getElementById('modelInput'); if(m){ DEV.modelUrl=m.value.trim(); }
     saveDev(); render(); const b=document.getElementById('saveBtn'); if(b) b.textContent='저장했어요'; return;
   }
+  else if(a==='voiceTest'){ speak('목 스트레칭, 시작할게요. 귀를 어깨 쪽으로 천천히 내려요. 5초 남았어요.',true); return; }
   else if(a==='reset'){
     if(!resetArmed){ resetArmed=true; el.textContent='한 번 더 누르면 기록이 모두 지워져요'; return; }
     resetArmed=false; S=BLANK(); save();
