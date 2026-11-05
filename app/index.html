@@ -179,14 +179,81 @@ body.wide .app{max-width:1000px}
 .breakdown dd{margin:0;font-weight:700;text-align:right}
 .newbadge{background:var(--sun-soft);border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;text-align:left;width:100%}
 
-/* badges */
-.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.badge{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
-.badge .medal{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--muted)}
-.badge.got .medal{background:var(--sun);color:#3A2A05}
+/* badges: 배지마다 색과 그림, 못 받은 배지는 진행도 */
+.medal{flex:none;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:color-mix(in srgb,var(--bc) 55%,var(--muted));border:2px dashed color-mix(in srgb,var(--bc) 35%,var(--line))}
+.medal.got{border:0;color:#fff;background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--bc) 55%,#fff),var(--bc) 70%);box-shadow:0 3px 0 color-mix(in srgb,var(--bc) 62%,#000),inset 0 0 0 3px rgba(255,255,255,.38)}
+.bgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.badge{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-width:0}
+.badge.got{border-color:color-mix(in srgb,var(--sun) 55%,var(--line));background:linear-gradient(180deg,var(--sun-soft),var(--surface) 70%)}
 .badge b{font-size:13px;line-height:1.3}
 .badge small{font-size:11px;color:var(--muted);line-height:1.35}
-.badge:not(.got){opacity:.7}
+.badge .bp{font-size:11px;font-weight:700;color:var(--warn);background:var(--surface);border:1px solid color-mix(in srgb,var(--sun) 60%,var(--line));border-radius:99px;padding:1px 8px}
+.bprog{width:100%;display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:2px}
+.bprog .track{width:80%;height:6px}
+.bprog small{font-variant-numeric:tabular-nums}
+.plus{flex:none;margin-left:auto;font-family:var(--display);font-size:16px;color:var(--warn);white-space:nowrap}
+.nextb{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 14px}
+.nextb > span:nth-child(2){flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.nextb b{font-size:14px}
+.nextb small{font-size:12px}
+.nextb .track{height:7px}
+/* 첫 화면: 이렇게 모아요 */
+.how{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.how h3{font-size:18px}
+.how ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:how}
+.how li{display:flex;align-items:center;gap:12px;counter-increment:how}
+.how li b{display:block;font-size:15px}
+.how li b::before{content:counter(how) ". ";color:var(--muted);font-weight:500}
+.how li small{font-size:13px;color:var(--muted)}
+.hi{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}
+.why365{font-size:13px;background:var(--sun-soft);border-radius:12px;padding:9px 12px;line-height:1.5}
+/* 홈: 포인트 · 배지 · 랭킹 */
+.stats3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stats3 .stat{text-align:left;display:flex;flex-direction:column;gap:1px;min-width:0;padding:10px 12px}
+.stats3 .stat span{font-size:12px;color:var(--muted);white-space:nowrap}
+.stats3 .stat b{display:block;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--navy)}
+.stats3 .stat b small{font-size:15px;color:var(--muted);margin-left:1px}
+.stats3 .stat em{font-style:normal;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 추천 화면: 왜 이 운동을 할까요? */
+.whycard{display:grid;grid-template-columns:80px 1fr;gap:12px 14px;align-items:center}
+.whycard .habit,.whycard .src{grid-column:1/-1}
+.bodymap{width:80px;height:auto}
+.bodymap .base{fill:color-mix(in srgb,var(--accent) 14%,var(--surface-2));stroke:color-mix(in srgb,var(--accent) 25%,var(--line));stroke-width:1.2}
+.bodymap .hot{fill:#F2643D;stroke:#fff;stroke-width:1.2;animation:glow 1.6s ease-in-out infinite}
+@keyframes glow{50%{opacity:.55}}
+.habit{font-size:13px;font-weight:700;color:var(--teal);background:var(--teal-soft);border-radius:10px;padding:6px 10px}
+/* 랭킹 */
+.mecard{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 16px}
+.mecard b{display:block;font-size:16px}
+.mecard small{font-size:13px;color:var(--muted)}
+.mecard.on{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 70%,#7B61FF));border:0;color:#fff}
+.mecard.on small{color:rgba(255,255,255,.88)}
+.mecard .rk{font-family:var(--display);font-size:38px;line-height:1}
+.mecard .rk small{font-size:16px;color:inherit;margin-left:2px}
+.podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:end;padding-top:6px}
+.pod{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;min-width:0}
+.pod b{font-size:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pod small{font-size:12px;color:var(--muted)}
+.pod .pp{font-family:var(--display);font-size:18px;color:var(--navy);font-variant-numeric:tabular-nums}
+.pod .rkm{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-size:20px;color:#fff;margin-bottom:4px;box-shadow:0 3px 0 rgba(0,0,0,.18),inset 0 0 0 3px rgba(255,255,255,.35)}
+.pod.p1 .rkm{background:radial-gradient(circle at 35% 30%,#FFE58A,#E9A817 70%);width:50px;height:50px;font-size:24px}
+.pod.p2 .rkm{background:radial-gradient(circle at 35% 30%,#F1F4F8,#A7B1BF 70%)}
+.pod.p3 .rkm{background:radial-gradient(circle at 35% 30%,#F6C9A0,#C9783A 70%)}
+.pod i{display:block;width:100%;border-radius:12px 12px 4px 4px;margin-top:6px;background:var(--surface-2)}
+.pod.p1 i{height:74px;background:linear-gradient(180deg,var(--sun-soft),var(--surface-2))}
+.pod.p2 i{height:52px}
+.pod.p3 i{height:38px}
+.pod.mine b{color:var(--accent)}
+.pod.empty{opacity:.45}
+.rlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rlist li{display:grid;grid-template-columns:30px 1fr auto auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:9px 14px}
+.rlist .rk{font-family:var(--display);font-size:18px;color:var(--muted);text-align:center}
+.rlist .nm{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rlist .nm em{font-style:normal;font-size:11px;color:#fff;background:var(--accent);border-radius:99px;padding:1px 7px;margin-left:4px}
+.rlist .lv{font-size:12px;color:var(--muted)}
+.rlist .pp{font-family:var(--display);font-size:17px;font-variant-numeric:tabular-nums}
+.rlist li.mine{border-color:var(--accent);background:var(--accent-soft)}
+.goal h3{font-size:17px}
 
 /* tree */
 .tree{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
@@ -264,11 +331,11 @@ body.wide .app{max-width:1000px}
 
 /* nav */
 nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav.tabs .in{max-width:460px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
-nav.tabs button{border:0;background:none;padding:10px 4px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);font-weight:500}
+nav.tabs .in{max-width:460px;margin:0 auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+nav.tabs button{border:0;background:none;padding:10px 2px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--muted);font-weight:500;min-width:0;white-space:nowrap}
 nav.tabs button[aria-current="page"]{color:var(--accent)}
 nav.tabs svg{width:24px;height:24px}
-@media (prefers-reduced-motion: reduce){.bob,.pop{animation:none}.track i{transition:none}}
+@media (prefers-reduced-motion: reduce){.bob,.pop,.bodymap .hot{animation:none}.track i{transition:none}}
 </style>
 </head>
 <body>
@@ -290,8 +357,11 @@ const CONFIG = {
   MODELS: { neck:'', sleepy:'', stress:'', back:'', phone:'', wrist:'' },
   BASE_CLASS: '기본 자세',   // 아무 동작도 안 할 때의 클래스 이름
   THRESHOLD: 0.8,            // 이 확률 이상이면 자세 인정 (0.8 = 80%)
-  XP_LEARN: 2,               // 배우기 모드 또는 타이머 동작 하나를 끝까지 했을 때
-  XP_VERIFIED: 5,            // 카메라로 자세 인증을 받은 동작 하나
+  XP_LEARN: 2,               // 포인트: 배우기 모드 또는 타이머 동작 하나를 끝까지 했을 때
+  XP_VERIFIED: 5,            // 포인트: 카메라로 자세 인증을 받은 동작 하나
+  XP_BADGE: 20,              // 포인트: 배지 하나를 처음 받을 때 보너스
+  DAILY_MAX: 60,             // 하루에 받을 수 있는 운동 포인트 (배지 보너스는 따로). 0이면 제한 없음
+  CLASS_GOAL: 365,           // 랭킹 탭: 우리 반이 함께 채울 운동 횟수 목표
   // 기록 서버: 구글 시트 앱스 스크립트 웹 앱 주소 (서버_설치방법.md 참고). 예: 'https://script.google.com/macros/s/.../exec'
   // 넣으면 이름으로 등록한 기록이 시트에 저장돼서 어느 기기에서든 이어져요. 비워 두면 기록이 이 기기에만 저장돼요.
   SERVER_URL: 'https://script.google.com/macros/s/AKfycbwYcbR7xewf3NkIHScu9MRE6hEfpWZU04nTK4B06-a8Y0SCScJQIc3MgANYBGqAdoPy/exec'
@@ -362,6 +432,36 @@ const TIME=[
   {k:'m',label:'5분',sub:'쉬는 시간 · 2세트',sets:2},
   {k:'l',label:'10분',sub:'점심시간, 집 · 3세트',sets:3}
 ];
+/* 추천 화면의 "왜 이 운동을 할까요?": 몸 상태마다 근거 한 줄과 출처. 모둠이 찾은 근거로 바꿔도 돼요. */
+const WHY={
+  neck:  {t:'고개를 60도 숙이면 목이 버티는 무게가 약 27kg이 돼요. 8살 어린이 몸무게만큼이에요! 목을 펴고 어깨를 풀면 다시 가벼워져요.', src:'Hansraj, 2014 (척추 외과 연구)'},
+  sleepy:{t:'오래 앉아만 있으면 뇌로 가는 피가 조금씩 줄어요. 30분마다 2분만 움직여도 다시 늘어나요.', src:'Carter 외, 2018 (응용생리학 저널)'},
+  stress:{t:'숨을 길게 내쉬면 몸을 쉬게 하는 신경이 일해서 두근거리던 심장이 차분해져요.', src:'Zaccaro 외, 2018 (호흡 연구 모음 분석)'},
+  back:  {t:'같은 자세로 오래 앉아 있으면 허리와 엉덩이 근육이 굳어요. 세계보건기구도 어린이에게 앉아 있는 시간을 줄이라고 권해요.', src:'세계보건기구(WHO) 신체 활동 지침, 2020'},
+  phone: {t:'화면을 볼 때는 눈 깜빡임이 평소보다 크게 줄어 눈이 말라요. 20분마다 20초 동안 6m 먼 곳을 보면 눈이 쉬어요.', src:'미국안과학회 20-20-20 규칙'},
+  wrist: {t:'글씨를 쓰거나 휴대폰을 쥘 때는 손가락을 굽히는 근육이 쉬지 않고 일해요. 반대로 쭉 펴 주면 근육이 쉬어요.', src:''}
+};
+/* 몸 그림: 몸 상태마다 빨갛게 빛나는 곳 */
+const ZONE={neck:['neck','shoulder'],sleepy:['head','leg'],stress:['chest'],back:['waist','leg'],phone:['eye'],wrist:['hand']};
+const ZONE_SVG={
+  head:'<circle cx="50" cy="19" r="13"/>',
+  eye:'<circle cx="45" cy="18" r="3.2"/><circle cx="55" cy="18" r="3.2"/>',
+  neck:'<rect x="44" y="30" width="12" height="9" rx="3"/>',
+  shoulder:'<circle cx="33" cy="43" r="6.5"/><circle cx="67" cy="43" r="6.5"/>',
+  chest:'<ellipse cx="50" cy="54" rx="13" ry="10"/>',
+  waist:'<rect x="34" y="70" width="32" height="15" rx="6"/>',
+  hand:'<circle cx="20" cy="85" r="5.5"/><circle cx="80" cy="85" r="5.5"/>',
+  leg:'<path d="M35 92 L48 93 L47 138 Q41 141 38 138 Z"/><path d="M65 92 L52 93 L53 138 Q59 141 62 138 Z"/>'
+};
+function bodyMap(b){
+  return `<svg class="bodymap" viewBox="0 0 100 150" role="img" aria-label="이 운동이 돕는 몸 부위">
+   <g class="base"><circle cx="50" cy="19" r="13"/><rect x="44" y="30" width="12" height="9" rx="3"/>
+    <path d="M30 40 Q50 34 70 40 L67 84 Q50 89 33 84 Z"/>
+    <path d="M30 41 Q22 44 21 56 L17 82 Q16 86 20 87 Q23 87 24 83 L30 59 Z"/><path d="M70 41 Q78 44 79 56 L83 82 Q84 86 80 87 Q77 87 76 83 L70 59 Z"/>
+    <path d="M34 84 L49 86 L47 140 Q41 143 37 140 Z"/><path d="M66 84 L51 86 L53 140 Q59 143 63 140 Z"/></g>
+   <g class="hot">${(ZONE[b]||[]).map(k=>ZONE_SVG[k]).join('')}</g>
+  </svg>`;
+}
 /* steps: [동작 이름, 설명, 초, 카메라 인증 클래스(티처블 머신 클래스 이름, 없으면 타이머 동작)] */
 const EX={
  'neck|class':{name:'앉아서 목·어깨 풀기',q:'초등 앉아서 목 어깨 스트레칭',steps:[
@@ -466,7 +566,7 @@ const dexN=()=>EXK.filter(dexGot).length;
 /* ---------- 저장 ---------- */
 const KEY='tuntuni365';
 const store={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
-const BLANK=()=>({xp:0,history:[],count:0,bodies:[],places:[],last:null,long:false,verified:0,feel:{},ids:[]});
+const BLANK=()=>({xp:0,history:[],count:0,bodies:[],places:[],last:null,long:false,verified:0,feel:{},ids:[],badges:[],dayXp:null});
 /* 기기 설정과 지금 사용자: user = {kind:'server'|'local'|'guest', name, group, hasPin, token, at} */
 const OLD=store.get(KEY,null)||{};
 let DEV=Object.assign({modelUrl:OLD.modelUrl||'',voice:OLD.voice!==false,user:null},store.get(KEY+':device',{}));
@@ -490,6 +590,8 @@ function applyDelta(s,d){
   if(d.worked){ s.count++; if(!s.history.includes(d.day)) s.history.push(d.day);
     if(!s.bodies.includes(d.b)) s.bodies.push(d.b); if(!s.places.includes(d.p)) s.places.push(d.p); if(d.long) s.long=true; }
   if(d.f){ const k=d.b+'|'+d.p, a=s.feel[k]||[0,0]; s.feel[k]=[a[0]+d.f,a[1]+1]; }
+  if(d.day&&d.moveXp){ if(!s.dayXp||s.dayXp.day!==d.day) s.dayXp={day:d.day,xp:0}; s.dayXp.xp+=d.moveXp; }   /* 오늘 받은 운동 포인트 (하루 한도용) */
+  if(d.badges&&d.badges.length){ s.badges=s.badges||[]; d.badges.forEach(k=>{ if(!s.badges.includes(k)) s.badges.push(k); }); }   /* 한 번 받은 배지는 계속 내 것 */
   s.last={b:d.b,p:d.p,t:d.t};
   if(d.id){ s.ids.push(d.id); if(s.ids.length>100) s.ids.shift(); }
   return true;
@@ -498,10 +600,11 @@ const withQueue=st=>{ const s=Object.assign(BLANK(),JSON.parse(JSON.stringify(st
 const uid=()=>(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
 
 /* ---------- 기록 서버 ---------- */
+const SRV={v:0};   /* 서버 버전: 2부터 배지 기록·하루 한도·랭킹을 지원해요 */
 async function api(action,data){
   const ac=new AbortController(), tm=setTimeout(()=>ac.abort(),15000);
   try{ const r=await fetch(CONFIG.SERVER_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action},data)),signal:ac.signal});
-    return await r.json(); }
+    const j=await r.json(); if(j&&j.v) SRV.v=j.v; return j; }
   catch(e){ return {ok:false,error:'network'}; }
   finally{ clearTimeout(tm); }
 }
@@ -513,9 +616,9 @@ async function flush(){
     const r=await api('add',{name:u.name,token:u.token,delta:Q[0]});
     if(DEV.user!==u) break;
     if(!r.ok){ SYNC.state=r.error==='auth'?'auth':'offline'; break; }
-    Q.shift(); S=withQueue(r.state); save(); SYNC.state='saved';
+    Q.shift(); S=withQueue(r.state); save(); SYNC.state='saved'; RANK.at={};   /* 새 기록이 들어갔으니 랭킹을 다시 불러와요 */
   }
-  SYNC.busy=false; if(DEV.user===u) renderStatus();
+  SYNC.busy=false; if(DEV.user===u){ renderStatus(); if(UI.tab==='rank'&&!UI.gate) loadRank(true); }
 }
 async function refresh(){   /* 다른 기기에서 운동한 기록까지 불러오기 */
   const u=DEV.user; if(!u||u.kind!=='server') return;
@@ -552,22 +655,56 @@ function streak(){let n=0,d=new Date(); if(!S.history.includes(dkey(d))) d.setDa
 const level=()=>Math.floor(S.xp/50)+1;
 const feelCount=()=>Object.values(S.feel).reduce((a,f)=>a+f[1],0);
 
+/* 배지: 처음 받을 때 CONFIG.XP_BADGE 보너스. ic는 그림, col은 색, prog는 [지금, 목표] */
+const ST='fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"';
+const BIC={
+ flag:`<path d="M6 21V4h11l-2.5 4L17 12H6" ${ST}/>`,
+ cam:`<path d="M4 7h3l2-2h6l2 2h3v12H4z" ${ST}/><circle cx="12" cy="13" r="3.5" ${ST}/>`,
+ flame:'<path fill="currentColor" d="M12 2c1 4 5 5.5 5 11a5 5 0 0 1-10 0c0-2.5 1.2-4 2.5-5 .1 1.6.8 2.7 2 3 0-3 .2-6-.5-9z"/>',
+ crown:'<path fill="currentColor" d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/>',
+ drop:'<path fill="currentColor" d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/>',
+ target:`<circle cx="12" cy="12" r="8.5" ${ST}/><circle cx="12" cy="12" r="4.5" ${ST}/><circle cx="12" cy="12" r="1.4" fill="currentColor"/>`,
+ body:`<circle cx="12" cy="4.8" r="2.6" fill="currentColor"/><path d="M5 9h14M12 9v6M12 15l-4 6M12 15l4 6" ${ST}/>`,
+ house:`<path d="M3 11l9-7 9 7v9H3z" ${ST}/><path d="M10 20v-5h4v5" ${ST}/>`,
+ pin:`<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" ${ST}/><circle cx="12" cy="9.5" r="2.5" ${ST}/>`,
+ cards:`<rect x="3" y="4" width="8" height="11" rx="2" ${ST}/><rect x="13" y="9" width="8" height="11" rx="2" ${ST}/>`,
+ sprout:`<path d="M12 21v-9M12 12C12 8 9 6 5 6c0 4 3 6 7 6zM12 14c0-3 2.5-5 6.5-5 0 3-2.5 5-6.5 5z" ${ST}/>`,
+ glass:`<path d="M7 3h10M7 21h10M8 3c0 5 8 6 8 9s-8 4-8 9M16 3c0 5-8 6-8 9s8 4 8 9" ${ST}/>`,
+ smile:`<circle cx="12" cy="12" r="9" ${ST}/><path d="M8 14q4 4 8 0" ${ST}/><circle cx="9" cy="10" r="1.3" fill="currentColor"/><circle cx="15" cy="10" r="1.3" fill="currentColor"/>`,
+ trophy:`<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9 17h6" ${ST}/>`
+};
+const half=()=>Math.ceil(EXK.length/2);
 const BADGES=[
-  {k:'first',name:'첫걸음',desc:'운동 1번 완료',ok:()=>S.count>=1},
-  {k:'v1',name:'첫 자세 인증',desc:'카메라로 동작 1개 인증',ok:()=>S.verified>=1},
-  {k:'s3',name:'3일 연속',desc:'3일 연속 운동',ok:()=>streak()>=3},
-  {k:'s7',name:'일주일 챔피언',desc:'7일 연속 운동',ok:()=>streak()>=7},
-  {k:'c10',name:'열 번의 땀방울',desc:'운동 10번 완료',ok:()=>S.count>=10},
-  {k:'v20',name:'인증 마스터',desc:'카메라로 동작 20개 인증',ok:()=>S.verified>=20},
-  {k:'allbody',name:'몸 박사',desc:`몸 상태 ${BODY.length}가지 모두 해보기`,ok:()=>BODY.every(b=>S.bodies.includes(b.k))},
-  {k:'allplace',name:'어디서나 튼튼',desc:'교실·운동장·집 모두 해보기',ok:()=>PLACE.every(p=>S.places.includes(p.k))},
-  {k:'town1',name:'동네 탐험가',desc:'우리 동네 장소에서 운동하기',ok:()=>S.places.includes('town')},
-  {k:'dex',name:'도감 수집가',desc:`동작 카드 ${Math.ceil(EXK.length/2)}장 모으기`,ok:()=>dexN()>=Math.ceil(EXK.length/2)},
-  {k:'lv3',name:'꽃 핀 튼튼이',desc:'레벨 3 달성',ok:()=>level()>=3},
-  {k:'long',name:'끈기왕',desc:'10분 운동을 건너뛰기 없이',ok:()=>S.long},
-  {k:'feel10',name:'꼼꼼 기록왕',desc:'운동 후 몸 상태 10번 기록',ok:()=>feelCount()>=10},
-  {k:'c30',name:'건강 365 도전자',desc:'운동 30번 완료',ok:()=>S.count>=30}
+  {k:'first',name:'첫걸음',desc:'운동 1번 완료',ic:'flag',col:'#2F80ED',prog:()=>[S.count,1]},
+  {k:'v1',name:'첫 자세 인증',desc:'카메라로 동작 1개 인증',ic:'cam',col:'#13A08A',prog:()=>[S.verified,1]},
+  {k:'s3',name:'3일 연속',desc:'3일 연속 운동',ic:'flame',col:'#F2643D',prog:()=>[streak(),3]},
+  {k:'s7',name:'일주일 챔피언',desc:'7일 연속 운동',ic:'crown',col:'#E5483A',prog:()=>[streak(),7]},
+  {k:'c10',name:'열 번의 땀방울',desc:'운동 10번 완료',ic:'drop',col:'#14A3B8',prog:()=>[S.count,10]},
+  {k:'v20',name:'인증 마스터',desc:'카메라로 동작 20개 인증',ic:'target',col:'#1F9D57',prog:()=>[S.verified,20]},
+  {k:'allbody',name:'몸 박사',desc:`몸 상태 ${BODY.length}가지 모두 해보기`,ic:'body',col:'#7B61FF',prog:()=>[BODY.filter(b=>S.bodies.includes(b.k)).length,BODY.length]},
+  {k:'allplace',name:'어디서나 튼튼',desc:'교실·운동장·집 모두 해보기',ic:'house',col:'#2F5FD0',prog:()=>[PLACE.filter(p=>S.places.includes(p.k)).length,PLACE.length]},
+  {k:'town1',name:'동네 탐험가',desc:'우리 동네 장소에서 운동하기',ic:'pin',col:'#0E9F6E',prog:()=>[S.places.includes('town')?1:0,1]},
+  {k:'dex',name:'도감 수집가',desc:`동작 카드 ${half()}장 모으기`,ic:'cards',col:'#F28C28',prog:()=>[dexN(),half()]},
+  {k:'lv3',name:'꽃 핀 튼튼이',desc:'레벨 3 달성',ic:'sprout',col:'#4DB565',prog:()=>[level(),3]},
+  {k:'long',name:'끈기왕',desc:'10분 운동을 건너뛰기 없이',ic:'glass',col:'#8E44AD',prog:()=>[S.long?1:0,1]},
+  {k:'feel10',name:'꼼꼼 기록왕',desc:'운동 후 몸 상태 10번 기록',ic:'smile',col:'#E5487D',prog:()=>[feelCount(),10]},
+  {k:'c30',name:'건강 365 도전자',desc:'운동 30번 완료',ic:'trophy',col:'#D99A0B',prog:()=>[S.count,30]}
 ];
+BADGES.forEach(b=>{ b.ok=()=>{ const [c,g]=b.prog(); return c>=g; }; });
+/* 한 번 받은 배지는 연속 기록이 끊겨도 계속 내 것 */
+const badgeGot=b=>(S.badges||[]).includes(b.k)||b.ok();
+const gotBadges=()=>BADGES.filter(badgeGot);
+/* 서버가 배지를 기억할 수 있을 때만 보너스를 줘요 (예전 서버면 보너스가 여러 번 나갈 수 있어서) */
+const bonusReady=()=>DEV.user&&(DEV.user.kind==='local'||(DEV.user.kind==='server'&&SRV.v>=2));
+function medal(b,got,size=52){
+  return `<span class="medal${got?' got':''}" style="--bc:${b.col};width:${size}px;height:${size}px"><svg width="${Math.round(size*.5)}" height="${Math.round(size*.5)}" viewBox="0 0 24 24" aria-hidden="true">${BIC[b.ic]}</svg></span>`;
+}
+/* 가장 가까운 다음 배지: 남은 횟수가 가장 적은 것 (카메라 모델이 없으면 카메라 배지는 빼요) */
+function nextBadge(){
+  const camOK=!!(CONFIG.MODEL_URL||DEV.modelUrl||Object.values(CONFIG.MODELS).some(Boolean));
+  return BADGES.filter(b=>!badgeGot(b)&&(camOK||!['v1','v20'].includes(b.k))).map(b=>{ const [c,g]=b.prog(), v=Math.min(c,g); return {b,c:v,g,r:v/g,left:g-v}; })
+    .sort((x,y)=>x.left-y.left||y.r-x.r)[0]||null;
+}
 
 /* ---------- 그림 ---------- */
 /* 튼튼이 그림: 레벨별 파일. 디자이너 그림이 오면 img 폴더에 넣고 파일 이름을 적어요. 비어 있으면 아래 레벨 그림을 써요. */
@@ -584,6 +721,17 @@ const CREST=`<svg class="crest" viewBox="0 0 80 72" role="img" aria-label="6학�
  <path d="M40 12 l2 4.2 4.6.6-3.3 3.2.8 4.6-4.1-2.2-4.1 2.2.8-4.6-3.3-3.2 4.6-.6z" fill="#fff"/>
  <text x="40" y="47" text-anchor="middle" font-family="Jua, sans-serif" font-size="17" fill="#fff">6-3</text></svg>`;
 const brand=()=>`<header class="brand">${CREST}<div><h1>튼튼이<em>365</em></h1><p>건강한 생활 습관, 매일 365일 함께해요!</p></div></header>`;
+/* 첫 화면 "이렇게 모아요": 포인트 → 배지 보너스 → 레벨·랭킹 */
+const HOW_IC=(k,c)=>`<span class="hi" style="--c:${c}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">${BIC[k]}</svg></span>`;
+const howTo=()=>`<section class="how" aria-label="포인트 모으는 법">
+  <h3>이렇게 모아요</h3>
+  <ol>
+   <li>${HOW_IC('drop','#1F9D57')}<span><b>운동하면 포인트</b><small>동작 1개 ${CONFIG.XP_LEARN}P · 카메라 인증 ${CONFIG.XP_VERIFIED}P</small></span></li>
+   <li>${HOW_IC('crown','#E9A817')}<span><b>배지 모으면 보너스</b><small>배지 ${BADGES.length}개, 처음 받을 때마다 +${CONFIG.XP_BADGE}P</small></span></li>
+   <li>${HOW_IC('trophy','#2F5FD0')}<span><b>레벨 업, 랭킹 도전</b><small>50P마다 튼튼이가 자라고, 랭킹에 이름이 올라가요</small></span></li>
+  </ol>
+  <p class="why365"><b>왜 짧고 쉬운 동작일까요?</b> 쉬워야 매일 할 수 있어요. <b>2분 × 하루 3번 × 365일 = 약 36시간!</b></p>
+ </section>`;
 /* 곰돌이 뒤 배경: 운동화, 심장, 물병, 반짝이, 언덕, 풀잎 */
 const SCENE_DECO=`<svg class="deco" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
  <circle cx="200" cy="215" r="120" fill="var(--glow)" opacity=".6"/>
@@ -725,9 +873,9 @@ function confetti(big){
     if(age<life&&cv.isConnected) requestAnimationFrame(f); else cv.remove(); })(t0);
 }
 function countUp(el,to){
-  if(!el) return; if(calm()||!to){ el.textContent=`+${to} XP`; return; }
+  if(!el) return; if(calm()||!to){ el.textContent=`+${to}P`; return; }
   const t0=performance.now();
-  (function f(t){ const k=Math.min(1,(t-t0)/900); el.textContent=`+${Math.round(to*(1-Math.pow(1-k,3)))} XP`; if(k<1) requestAnimationFrame(f); })(t0);
+  (function f(t){ const k=Math.min(1,(t-t0)/900); el.textContent=`+${Math.round(to*(1-Math.pow(1-k,3)))}P`; if(k<1) requestAnimationFrame(f); })(t0);
 }
 
 /* ---------- 자세 인식 (티처블 머신) ---------- */
@@ -763,13 +911,14 @@ function renderStatus(){
   st.hidden=!DEV.user; if(!DEV.user) return;
   const lv=level(), p=(S.xp%50)/50*100;
   st.innerHTML=`${mascot(lv,38)}<span class="lv">Lv.${lv}</span>
-    <div class="xpbar"><div class="track"><i style="width:${p}%"></i></div><small>다음 레벨까지 ${50-S.xp%50} XP${syncNote()}</small></div>
+    <div class="xpbar"><div class="track"><i style="width:${p}%"></i></div><small>${S.xp}P · 다음 레벨까지 ${50-S.xp%50}P${syncNote()}</small></div>
     <span class="flame" title="연속 운동한 날">${FLAME}${streak()}</span>`;
 }
 const TABS=[
  ['today','오늘','<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/>'],
  ['town','동네',IC.town],
  ['book','도감','<rect x="3" y="4" width="8" height="11" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><rect x="13" y="9" width="8" height="11" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M7 8v3M17 13v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'],
+ ['rank','랭킹','<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9 17h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'],
  ['tree','알고리즘','<circle cx="12" cy="4.5" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="5" cy="19" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="19" cy="19" r="2.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 7v4M12 11L5 16.5M12 11l7 5.5" stroke="currentColor" stroke-width="2" fill="none"/>'],
  ['info','정보','<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>']
 ];
@@ -785,6 +934,7 @@ function render(){
   if(!DEV.user||UI.gate) return viewGate();
   renderTabs();
   if(UI.tab==='book') return viewBook();
+  if(UI.tab==='rank') return viewRank();
   if(UI.tab==='town') return viewTown();
   if(UI.tab==='tree') return viewTree();
   if(UI.tab==='info') return viewInfo();
@@ -811,7 +961,7 @@ function viewGate(){
   if(g==='resume'){ const u=DEV.user;
     $view.innerHTML=`<div class="col">
      <section class="hero"><div class="bubble">${fullName(u)}, 다시 왔구나!</div><div class="bob">${mascot(level(),140)}</div>
-      <p class="muted">Lv.${level()} · ${S.xp} XP · 연속 ${streak()}일</p></section>
+      <p class="muted">Lv.${level()} · ${S.xp}P · 연속 ${streak()}일</p></section>
      <button class="cta" data-act="resume">계속하기</button>
      <button class="ghost" data-act="logout">${esc(u.name)}이(가) 아니에요</button>
     </div>`; return; }
@@ -835,6 +985,7 @@ function viewGate(){
    ${brand()}
    ${scene('안녕! 나는 튼튼이야',1)}
    <p class="muted" style="text-align:center">매일 조금씩 운동하고 튼튼이를 키워요.</p>
+   ${howTo()}
    <div class="opts">
     <button class="opt" data-act="gate" data-k="join"><span class="ic">${icon('join')}</span><span><b>처음이에요</b><small>이름을 등록하고 시작해요</small></span></button>
     <button class="opt" data-act="gate" data-k="login"><span class="ic">${icon('login')}</span><span><b>이어서 하기</b><small>등록한 이름으로 들어가 레벨을 이어 가요</small></span></button>
@@ -873,7 +1024,8 @@ function viewHome(){
   for(let i=6;i>=0;i--){const d=new Date(); d.setDate(d.getDate()-i); const on=S.history.includes(dkey(d));
     week+=`<div class="day ${i===0?'today':''}"><div class="dot ${on?'on':''}">${on?'<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10" stroke="#3A2A05" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div><span>${i===0?'오늘':names[d.getDay()]}</span></div>`;}
   const MENU=[['town','','우리 동네',IC.town,'#2F80ED'],['book','moves','동작 도감',TABS[2][2],'#F2643D'],
-              ['book','badges','내 배지','<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z" fill="currentColor"/>','#D99A0B'],['tree','','알고리즘',TABS[3][2],'#7B61FF']];
+              ['book','badges','내 배지','<path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z" fill="currentColor"/>','#D99A0B'],['rank','','랭킹',TABS[3][2],'#7B61FF']];
+  const nb=nextBadge(), nBadge=gotBadges().length, srv=DEV.user.kind==='server';
   $view.innerHTML=`<div class="col">
    ${brand()}
    <div class="homehead">${scene(msg,level())}
@@ -881,10 +1033,68 @@ function viewHome(){
     <button class="startpill" data-act="start">${doneToday?'한 번 더 운동하기':'오늘의 체크인 시작'} <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
    </div>
    <div class="week" aria-label="최근 7일 운동 기록">${week}</div>
-   <div class="stats"><div class="stat"><b>${S.count}</b><span>운동한 횟수</span></div><div class="stat"><b>${S.verified}</b><span>카메라로 인증한 동작</span></div></div>
+   <div class="stats3">
+    <button class="stat" data-act="tab" data-k="rank"><span>내 포인트</span><b>${S.xp}<small>P</small></b><em>Lv.${level()} · 운동 ${S.count}번</em></button>
+    <button class="stat" data-act="tab" data-k="book" data-b="badges"><span>배지</span><b>${nBadge}<small>/${BADGES.length}</small></b><em>${bonusReady()?`보너스 ${(S.badges||[]).length*CONFIG.XP_BADGE}P`:'모아 보세요'}</em></button>
+    <button class="stat" data-act="tab" data-k="rank"><span>이번 주 랭킹</span><b id="homeRank">${homeRankText()}</b><em id="homeRankSub">${srv?'이번 주 순위':'등록하면 참여'}</em></button>
+   </div>
+   ${nb?`<button class="nextb" data-act="tab" data-k="book" data-b="badges">${medal(nb.b,false,40)}<span><small class="muted">다음 배지까지</small><b>${nb.b.name} · ${nb.c}/${nb.g}</b><span class="track"><i style="width:${Math.round(nb.r*100)}%;background:${nb.b.col}"></i></span></span><span class="plus">+${CONFIG.XP_BADGE}P</span></button>`:''}
    <p class="slogan">오늘도 한 걸음, 건강한 내일!</p>
    ${DEV.user.kind==='guest'?'<p class="note" style="text-align:center">손님 모드예요. 기록이 남지 않아요. 레벨을 이어 가려면 정보 탭에서 나가서 이름을 등록해 주세요.</p>':''}
   </div>`;
+  if(srv) loadRank(false,'week');
+}
+
+/* ---------- 랭킹: 서버(서버_앱스스크립트.gs의 rank)가 순위를 계산해요. 이름은 서버에서 가운데 글자를 ○로 가려서 보내요 ---------- */
+const RANK={period:'week',data:{},at:{},busy:{},err:''};
+async function loadRank(force,period){
+  const p=period||RANK.period;
+  if(!CONFIG.SERVER_URL||RANK.busy[p]) return;
+  if(!force&&(RANK.err||(RANK.data[p]&&Date.now()-(RANK.at[p]||0)<60000))) return;
+  RANK.busy[p]=true; if(force) RANK.err='';
+  const u=DEV.user, me=u&&u.kind==='server'?{name:u.name,token:u.token}:{};
+  const r=await api('rank',Object.assign({period:p},me));
+  RANK.busy[p]=false;
+  if(DEV.user!==u) return;
+  if(r.ok){ RANK.data[p]=r; RANK.at[p]=Date.now(); RANK.err=''; }
+  else RANK.err=r.error==='action'?'old':(r.error||'server');
+  if(UI.gate||UI.running) return;
+  if(UI.tab==='rank') render();
+  else if(UI.tab==='today'&&UI.screen==='home'){ const a=document.getElementById('homeRank'), b=document.getElementById('homeRankSub'); if(a) a.innerHTML=homeRankText(); if(b&&RANK.err==='old') b.textContent='곧 열려요'; }
+}
+function homeRankText(){
+  const r=RANK.data.week; if(!r||!r.me) return '-';
+  return r.me.rank?`${r.me.rank}<small>위</small>`:'-';
+}
+function viewRank(){
+  const p=RANK.period, r=RANK.data[p], u=DEV.user;
+  const seg=`<div class="seg" role="group" aria-label="랭킹 기간"><button data-act="rankp" data-k="week" aria-pressed="${p==='week'}">이번 주</button><button data-act="rankp" data-k="all" aria-pressed="${p==='all'}">전체</button></div>`;
+  let body='';
+  if(!CONFIG.SERVER_URL) body='<div class="card"><p>랭킹은 기록 서버를 연결하면 볼 수 있어요.</p></div>';
+  else if(!r&&RANK.err) body=`<div class="card"><p>${RANK.err==='old'?'랭킹을 준비하고 있어요. 곧 열려요!':'랭킹을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'}</p><button class="ghost" data-act="rankRetry">다시 불러오기</button></div>`;
+  else if(!r) body='<div class="card"><p class="muted">랭킹을 불러오는 중이에요...</p></div>';
+  else{
+    const top=r.top||[];
+    const pod=[top[1],top[0],top[2]].map((x,i)=>{ const n=[2,1,3][i];
+      return x?`<div class="pod p${n}${x.me?' mine':''}"><span class="rkm">${x.rank}</span><b>${esc(x.name)}</b><small>Lv.${x.lv}</small><span class="pp">${x.pts}P</span><i></i></div>`:`<div class="pod p${n} empty"><span class="rkm">${n}</span><b>?</b><small>도전!</small><span class="pp">&nbsp;</span><i></i></div>`; }).join('');
+    const rest=top.slice(3).map(x=>`<li class="${x.me?'mine':''}"><span class="rk">${x.rank}</span><span class="nm">${esc(x.name)}${x.me?' <em>나</em>':''}</span><span class="lv">Lv.${x.lv}</span><span class="pp">${x.pts}P</span></li>`).join('');
+    const m=r.me;
+    const meCard=!u||u.kind!=='server'?'<div class="mecard"><b>이름을 등록하면 나도 랭킹에 올라가요!</b><small>손님 모드는 기록이 남지 않아요.</small></div>'
+      :!m||!m.rank?`<div class="mecard"><b>${p==='week'?'이번 주':'아직'} 포인트가 없어요</b><small>운동하고 랭킹에 이름을 올려 봐요!</small></div>`
+      :`<div class="mecard on"><span class="rk">${m.rank}<small>위</small></span><span><b>나 · ${m.pts}P</b><small>${m.up?`${m.up.gap}P 더 모으면 ${m.up.rank}위!`:'1위예요! 매일 조금씩 지켜 봐요.'}</small></span></div>`;
+    const G=CONFIG.CLASS_GOAL, c=r.count||0, lap=Math.floor(c/G), goal=(lap+1)*G;
+    body=`${meCard}
+     ${top.length?`<div class="podium">${pod}</div>${rest?`<ol class="rlist">${rest}</ol>`:''}`
+       :`<div class="card"><p>${p==='week'?'이번 주':'아직'} 랭킹에 오른 사람이 없어요. 첫 번째 주인공이 되어 보세요!</p></div>`}
+     <div class="card goal"><div class="topline"><h3>우리 모두 함께 ${goal}번 운동하기</h3><span class="muted" style="font-size:13px">${lap?`목표 ${lap}번 달성!`:''}</span></div>
+      <div class="track big"><i style="width:${Math.min(100,(c-lap*G)/G*100)}%"></i></div>
+      <p class="note">지금까지 ${c}번 · 참여 ${r.users||0}명. 혼자가 아니라 다 함께 채우는 목표예요.</p></div>
+     <p class="note">포인트 = 운동 포인트(하루 최대 ${CONFIG.DAILY_MAX}P) + 배지 보너스. ${p==='week'?`이번 주 랭킹은 월요일(${esc(r.since||'')})부터 새로 시작해요. `:''}${r.masked===false?'':'이름은 가운데 글자를 ○로 가려요.'}</p>`;
+  }
+  $view.innerHTML=`<div class="col">
+   <div><p class="eyebrow">랭킹</p><h2>${p==='week'?'이번 주':'전체'} 튼튼 랭킹</h2></div>
+   ${seg}${body}</div>`;
+  loadRank(false);
 }
 
 /* ---------- 오늘: 체크인 ---------- */
@@ -998,6 +1208,8 @@ function viewResult(){
    <div><p class="eyebrow">튼튼이의 추천</p><h2>${ex.name}</h2></div>
    <div class="card"><p style="font-size:13px;font-weight:700">의사결정트리가 이렇게 골랐어요</p>${pathChips(b,p,t,ex.name)}
     <p class="note">몸 상태로 운동 종류를, 장소로 동작을, 시간으로 세트 수를 정해요.</p></div>
+   ${WHY[b]?`<div class="card whycard">${bodyMap(b)}<div class="col" style="gap:8px"><h3>왜 이 운동을 할까요?</h3><p>${WHY[b].t}</p></div>
+     <p class="habit">짧아도 괜찮아요! 2분 × 하루 3번 × 365일 = 약 36시간</p>${WHY[b].src?`<p class="note src">근거: ${WHY[b].src}</p>`:''}</div>`:''}
    <div class="card">
     <div class="topline"><h3>동작 순서</h3><span class="muted" style="font-size:13px;font-variant-numeric:tabular-nums">${sets}세트 · 약 ${Math.max(1,Math.round(total/60))}분</span></div>
     <ol class="steplist">${ex.steps.map((s,i)=>`<li><span class="n">${i+1}</span><span>${s[0]}${s[3]?`<span class="cam-ic" title="카메라 인증 동작">${icon('cam',16)}</span>`:''}</span><span class="s">${s[2]}초</span></li>`).join('')}</ol>
@@ -1005,8 +1217,8 @@ function viewResult(){
    </div>
    ${UI.err?`<p class="err" role="alert">${esc(UI.err)}</p>`:''}
    <div class="opts">
-    <button class="opt" data-act="mode" data-k="learn"><span class="ic">${icon('video')}</span><span><b>배우기 모드</b><small>시범 영상을 보며 따라 해요</small></span><span class="xp">동작당 ${CONFIG.XP_LEARN} XP</span></button>
-    <button class="opt ch" data-act="mode" data-k="challenge" id="chBtn" ${camN?'':'disabled'}><span class="ic">${icon('cam')}</span><span><b>도전 모드</b><small>${camNote}</small></span><span class="xp">인증당 ${CONFIG.XP_VERIFIED} XP</span></button>
+    <button class="opt" data-act="mode" data-k="learn"><span class="ic">${icon('video')}</span><span><b>배우기 모드</b><small>시범 영상을 보며 따라 해요</small></span><span class="xp">동작당 ${CONFIG.XP_LEARN}P</span></button>
+    <button class="opt ch" data-act="mode" data-k="challenge" id="chBtn" ${camN?'':'disabled'}><span class="ic">${icon('cam')}</span><span><b>도전 모드</b><small>${camNote}</small></span><span class="xp">인증당 ${CONFIG.XP_VERIFIED}P</span></button>
    </div>
   </div>`;
 }
@@ -1062,7 +1274,7 @@ function viewPlay(){
       <div class="num" id="num"></div></div>
      ${ch&&UI.demo?'<button class="hold" id="holdBtn">자세 잡기 (누르고 있기)</button>':''}
      <div class="conf" id="conf"></div>
-     <div class="row"><button class="ghost" data-act="pause" id="pauseBtn">잠깐 멈춤</button><button class="ghost" data-act="skip">건너뛰기 (0 XP)</button></div>
+     <div class="row"><button class="ghost" data-act="pause" id="pauseBtn">잠깐 멈춤</button><button class="ghost" data-act="skip">건너뛰기 (0P)</button></div>
     </div>
    </div>
   </div>`;
@@ -1165,7 +1377,7 @@ function viewFeel(){
   $view.innerHTML=`<div class="col" style="text-align:center;align-items:center">
    <div class="bob" style="margin-top:8px">${mascot(level(),120)}</div>
    <div><p class="eyebrow">운동 후 기록</p><h2>운동하기 전보다 몸이 어때요?</h2></div>
-   <p class="muted">기록을 남기면 XP를 받아요. 이 기록으로 추천 알고리즘을 고쳐요.</p>
+   <p class="muted">기록을 남기면 포인트를 받아요. 이 기록으로 추천 알고리즘을 고쳐요.</p>
    <div class="feel" style="width:100%">
     <button data-act="feel" data-k="1">${face(1)}그대로예요</button>
     <button data-act="feel" data-k="2">${face(2)}조금 나아졌어요</button>
@@ -1175,32 +1387,50 @@ function viewFeel(){
 function applyResult(f){
   const r=UI.results, doneN=r.filter(x=>x==='done').length, verN=r.filter(x=>x==='verified').length, skipN=r.filter(x=>x==='skip').length;
   const {b,p,t}=UI.pick, {ex}=recommend(b,p,t);
-  const before=new Set(BADGES.filter(x=>x.ok()).map(x=>x.k)), lvBefore=level(), newCard=p!=='town'&&!dexGot(b+'|'+p);
-  const xp=doneN*CONFIG.XP_LEARN+verN*CONFIG.XP_VERIFIED, worked=doneN+verN>0;
-  const d={id:uid(),day:todayKey(),b,p,t,f,xp,doneN,verN,skipN,worked,long:worked&&t==='l'&&skipN===0,
+  const before=new Set(gotBadges().map(x=>x.k)), lvBefore=level(), newCard=p!=='town'&&!dexGot(b+'|'+p);
+  /* 운동 포인트는 하루 한도(CONFIG.DAILY_MAX)까지만. 배지 보너스는 한도와 따로예요 */
+  const today=todayKey(), raw=doneN*CONFIG.XP_LEARN+verN*CONFIG.XP_VERIFIED, worked=doneN+verN>0;
+  const usedToday=S.dayXp&&S.dayXp.day===today?S.dayXp.xp:0;
+  const moveXp=CONFIG.DAILY_MAX>0?Math.max(0,Math.min(raw,CONFIG.DAILY_MAX-usedToday)):raw;
+  const d={id:uid(),day:today,b,p,t,f,xp:moveXp,moveXp,doneN,verN,skipN,worked,long:worked&&t==='l'&&skipN===0,
            ex:p==='town'?`${ex.name} (${UI.pick.spot.name})`:ex.name,mode:UI.mode==='challenge'?(UI.demo?'도전(체험)':'도전'):'배우기'};
   applyDelta(S,d);
+  /* 새로 받은 배지마다 보너스. 보너스로 레벨이 올라 또 배지를 받을 수 있어서 몇 번 더 확인해요 */
+  const won=[];
+  if(bonusReady()) for(let i=0;i<4;i++){
+    const fresh=BADGES.filter(x=>x.ok()&&!(S.badges||[]).includes(x.k)&&!won.includes(x.k)).map(x=>x.k);
+    if(!fresh.length) break;
+    won.push(...fresh); S.badges=(S.badges||[]).concat(fresh); S.xp+=fresh.length*CONFIG.XP_BADGE;
+  }
+  const bonus=won.length*CONFIG.XP_BADGE;
+  if(won.length){ d.badges=won; d.xp+=bonus; }   /* 서버에는 운동 포인트 + 보너스를 한 번에 보내요 */
   if(DEV.user.kind==='server') Q.push(d);
-  DEV.user.at=Date.now(); saveDev(); save(); flush();
-  UI.gain={xp,doneN,verN,skipN,lvUp:level()>lvBefore,badges:BADGES.filter(x=>x.ok()&&!before.has(x.k)),newCard:newCard&&dexGot(b+'|'+p),exName:ex.name,fresh:true};
+  DEV.user.at=Date.now(); saveDev(); save(); flush(); RANK.at={};
+  UI.gain={xp:moveXp+bonus,moveXp,raw,bonus,doneN,verN,skipN,capped:moveXp<raw,lvUp:level()>lvBefore,
+           badges:gotBadges().filter(x=>!before.has(x.k)),newCard:newCard&&dexGot(b+'|'+p),exName:ex.name,fresh:true};
   UI.screen='done'; render();
 }
 function viewDone(){
   const g=UI.gain;
-  const title=g.xp===0?'건너뛴 동작은 점수가 없어요':g.lvUp?'레벨 업! 튼튼이가 자랐어요':'운동 완료! 잘했어요';
+  const title=g.raw===0&&!g.bonus?'건너뛴 동작은 포인트가 없어요':g.lvUp?'레벨 업! 튼튼이가 자랐어요':'운동 완료! 잘했어요';
   let delay=.35; const nextD=()=>(delay+=.25).toFixed(2)+'s';
+  const nb=nextBadge();
   $view.innerHTML=`<div class="col" style="align-items:center;text-align:center">
    <div class="bob" style="margin-top:12px">${mascot(level(),130)}</div>
    ${g.lvUp?`<span class="lvup pop">Lv.${level()} 달성!</span>`:''}
-   <h2>${title}</h2><div class="gain" id="gainNum">+${g.xp} XP</div>
+   <h2>${title}</h2><div class="gain" id="gainNum">+${g.xp}P</div>
    ${g.newCard?`<div class="newbadge card2 pop" style="--d:${nextD()}"><span style="width:44px;height:44px;border-radius:12px;background:var(--teal);display:grid;place-items:center;flex:none;color:#fff">${icon(UI.pick.b,24)}</span><span><b>새 동작 카드: ${esc(g.exName)}</b><br><small class="muted">동작 도감 ${dexN()} / ${EXK.length}장</small></span></div>`:''}
+   ${g.badges.map(b=>`<div class="newbadge pop" style="--d:${nextD()}">${medal(b,true,48)}<span><b>새 배지: ${b.name}</b><br><small class="muted">${b.desc}</small></span>${g.bonus?`<span class="plus">+${CONFIG.XP_BADGE}P</span>`:''}</div>`).join('')}
    <div class="card" style="width:100%"><dl class="breakdown">
-    ${g.verN?`<dt>카메라로 인증한 동작</dt><dd>${g.verN}개 × ${CONFIG.XP_VERIFIED} XP</dd>`:''}
-    ${g.doneN?`<dt>끝까지 한 동작</dt><dd>${g.doneN}개 × ${CONFIG.XP_LEARN} XP</dd>`:''}
-    ${g.skipN?`<dt>건너뛴 동작</dt><dd>${g.skipN}개 × 0 XP</dd>`:''}
-    <dt>연속 운동</dt><dd>${streak()}일</dd></dl></div>
-   ${g.badges.map(b=>`<div class="newbadge pop" style="--d:${nextD()}"><span style="width:44px;height:44px;border-radius:50%;background:var(--sun);display:grid;place-items:center;flex:none;color:#3A2A05">${medalSvg()}</span><span><b>새 배지: ${b.name}</b><br><small class="muted">${b.desc}</small></span></div>`).join('')}
-   <button class="cta" data-act="home">처음으로</button>
+    ${g.verN?`<dt>카메라로 인증한 동작</dt><dd>${g.verN}개 × ${CONFIG.XP_VERIFIED}P</dd>`:''}
+    ${g.doneN?`<dt>끝까지 한 동작</dt><dd>${g.doneN}개 × ${CONFIG.XP_LEARN}P</dd>`:''}
+    ${g.skipN?`<dt>건너뛴 동작</dt><dd>${g.skipN}개 × 0P</dd>`:''}
+    ${g.capped?`<dt>오늘 운동 포인트 한도</dt><dd>${CONFIG.DAILY_MAX}P까지</dd>`:''}
+    ${g.bonus?`<dt>배지 보너스</dt><dd>+${g.bonus}P</dd>`:''}
+    <dt>연속 운동</dt><dd>${streak()}일</dd></dl>
+    ${g.capped?`<p class="note">오늘 받을 수 있는 운동 포인트를 ${g.moveXp?'다 채웠어요':'이미 다 받았어요'}. 내일 또 만나요! 배지 보너스는 따로 받을 수 있어요.</p>`:''}</div>
+   ${nb?`<div class="nextb">${medal(nb.b,false,40)}<span><small class="muted">다음 배지까지</small><b>${nb.b.name} · ${nb.c}/${nb.g}</b><span class="track"><i style="width:${Math.round(nb.r*100)}%;background:${nb.b.col}"></i></span></span></div>`:''}
+   <div class="row"><button class="ghost" data-act="tab" data-k="rank">랭킹 보기</button><button class="cta" data-act="home" style="flex:1.4">처음으로</button></div>
   </div>`;
   /* 처음 그릴 때만 효과음과 색종이 (다시 그려질 때는 숫자만) */
   if(g.fresh){ g.fresh=false; countUp(document.getElementById('gainNum'),g.xp);
@@ -1228,9 +1458,13 @@ function viewBook(){
   </div>`;
 }
 function viewBadges(){
+  const ready=bonusReady(), mine=S.badges||[];
+  const tag=b=>{ if(!badgeGot(b)){ const [c,g]=b.prog(), v=Math.min(c,g); return `<span class="bprog"><span class="track"><i style="width:${Math.round(v/g*100)}%;background:${b.col}"></i></span><small>${v}/${g}</small></span>`; }
+    return `<span class="bp">${!ready?'받음':mine.includes(b.k)?`+${CONFIG.XP_BADGE}P 받음`:`다음 운동 때 +${CONFIG.XP_BADGE}P`}</span>`; };
   $view.innerHTML=`<div class="col">${segBook()}
-   <div><p class="eyebrow">내 배지</p><h2>${BADGES.filter(b=>b.ok()).length}개 모았어요</h2></div>
-   <div class="bgrid">${BADGES.map(b=>`<div class="badge ${b.ok()?'got':''}"><span class="medal">${medalSvg()}</span><b>${b.name}</b><small>${b.desc}</small></div>`).join('')}</div>
+   <div><p class="eyebrow">내 배지</p><h2>${gotBadges().length} / ${BADGES.length}개 모았어요</h2>
+    <p class="muted" style="margin-top:6px">배지를 처음 받을 때마다 <b>+${CONFIG.XP_BADGE}P</b> 보너스! 한 번 받은 배지는 계속 내 것이에요.${ready&&mine.length?` 지금까지 보너스 <b>${mine.length*CONFIG.XP_BADGE}P</b>.`:''}</p></div>
+   <div class="bgrid">${BADGES.map(b=>{ const got=badgeGot(b); return `<div class="badge ${got?'got':''}">${medal(b,got)}<b>${b.name}</b><small>${b.desc}</small>${tag(b)}</div>`; }).join('')}</div>
    <p class="note">${DEV.user.kind==='server'?'배지는 내 이름으로 저장돼서 어느 기기에서든 이어져요.':DEV.user.kind==='guest'?'손님 모드라서 배지가 남지 않아요.':'기록은 이 기기의 브라우저에만 저장돼요.'}</p></div>`;
 }
 
@@ -1253,10 +1487,11 @@ ${Object.values(KIND).map(k=>`만약 종류 = ${k.label} → ${k.name}`).join('\
 만약 시간 = 5분     → 2세트
 만약 시간 = 10분    → 3세트</div></div>
    <div class="card"><h3>보상 규칙</h3>
-    <div class="rule">카메라로 자세 인증한 동작  → ${CONFIG.XP_VERIFIED} XP
-끝까지 따라 한 동작        → ${CONFIG.XP_LEARN} XP
-건너뛴 동작                → 0 XP
-50 XP마다                  → 튼튼이 레벨 업</div>
+    <div class="rule">카메라로 자세 인증한 동작  → ${CONFIG.XP_VERIFIED}P
+끝까지 따라 한 동작        → ${CONFIG.XP_LEARN}P
+건너뛴 동작                → 0P
+배지를 처음 받으면         → +${CONFIG.XP_BADGE}P 보너스
+${CONFIG.DAILY_MAX>0?`운동 포인트는 하루에       → ${CONFIG.DAILY_MAX}P까지\n`:''}50P마다                    → 튼튼이 레벨 업</div>
     <p class="note">수업 활동: "고칠 후보"가 붙은 운동은 동작을 바꾸고, 사용 후기를 보며 규칙을 고쳐 보세요.</p></div>
   </div>`;
 }
@@ -1309,7 +1544,7 @@ function viewInfo(){
 let resetArmed=false;
 document.addEventListener('click',e=>{
   const el=e.target.closest('[data-act]'); if(!el||el.disabled) return; const a=el.dataset.act;
-  if(a==='tab'){ if(UI.screen==='play'){ stopPlay(); UI.screen='result'; } UI.tab=el.dataset.k; if(el.dataset.b) UI.book=el.dataset.b; render(); window.scrollTo(0,0);
+  if(a==='tab'){ if(UI.screen==='play'){ stopPlay(); UI.screen='result'; } UI.tab=el.dataset.k; if(el.dataset.b) UI.book=el.dataset.b; if(UI.tab==='rank') RANK.err=''; render(); window.scrollTo(0,0);
     const tb=UI.tab; if((tb==='tree'||tb==='book')&&DEV.user.kind==='server') api('stats',{}).then(r=>{ if(r.ok){ UI.classFeel=r.feel; if(UI.tab===tb&&!UI.gate) render(); } });
     return; }
   if(a==='gps'){ useGps(); return; }
@@ -1320,6 +1555,8 @@ document.addEventListener('click',e=>{
   else if(a==='townGo'){ if(UI.tab!=='today'){ UI.tab='today'; UI.pick={}; } UI.err='';
     UI.pick.p='town'; UI.pick.spot=SPOTS[UI.spotI]; UI.screen='check'; UI.step=UI.pick.b?2:0; }
   else if(a==='book'){ UI.book=el.dataset.k; }
+  else if(a==='rankp'){ RANK.period=el.dataset.k; }
+  else if(a==='rankRetry'){ RANK.err=''; render(); loadRank(true); return; }
   else if(a==='dex'){ const [b,p]=el.dataset.k.split('|'); UI.tab='today'; UI.pick={b,p}; UI.err=''; UI.screen='check'; UI.step=2; }
   else if(a==='gate'){ UI.gate=el.dataset.k; UI.gateErr=''; if(el.dataset.k==='welcome') UI.form={}; }
   else if(a==='guest'){ DEV.user={kind:'guest',name:'손님'}; saveDev(); loadUser(); Object.assign(UI,{gate:null,tab:'today',screen:'home'}); }
