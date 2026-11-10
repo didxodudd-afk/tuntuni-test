@@ -374,11 +374,11 @@ nav.tabs svg{width:24px;height:24px}
 const CONFIG = {
   // 티처블 머신 [모델 내보내기 → 모델 업로드] 링크. 예: 'https://teachablemachine.withgoogle.com/models/AbCd1234/'
   // 비워 두면 도전 모드가 "체험 모드"(카메라 없이 버튼으로 연습)로 실행돼요. 정보 탭에서 기기별로 넣을 수도 있어요.
-  MODEL_URL: '',
+  MODEL_URL: 'https://teachablemachine.withgoogle.com/models/9enSknhIw/',   // 11/10 우리 반 공용 모델 (클래스 9개)
   // 모둠별 모델: 몸 상태마다 그 모둠의 모델 링크를 넣어요. 비워 두면 위의 MODEL_URL을 써요.
   MODELS: { back:'', legs:'', neck:'', phone:'', sleepy:'', stress:'' },
   BASE_CLASS: '기본 자세',   // 아무 동작도 안 할 때의 클래스 이름
-  THRESHOLD: 0.8,            // 이 확률 이상이면 자세 인정 (0.8 = 80%)
+  THRESHOLD: 0.7,            // 이 확률 이상이면 자세 인정 (0.7 = 70%)
   XP_LEARN: 2,               // 포인트: 배우기 모드 또는 타이머 동작 하나를 끝까지 했을 때
   XP_VERIFIED: 5,            // 포인트: 카메라로 자세 인증을 받은 동작 하나
   XP_BADGE: 20,              // 포인트: 배지 하나를 처음 받을 때 보너스
@@ -421,7 +421,7 @@ const KIND = {
   ground:{label:'운동장', name:'운동장 달리기 콤보', q:'어린이 운동장 체조', video:'', steps:[
     ['가볍게 달리기','트랙을 따라 가볍게 달려요.',40],
     ['팔 벌려 뛰기','팔과 다리를 동시에 벌렸다 모아요.',20],
-    ['런지','한 발 앞으로 내딛고 무릎을 굽혀 버텨요.',20,'런지']]},
+    ['런지','한 발 앞으로 내딛고 무릎을 굽혀 버텨요.',20]]},
   stairs:{label:'계단', name:'계단 오르기', q:'계단 운동 안전하게', video:'', steps:[
     ['손잡이 잡고 천천히 오르기','손잡이를 잡고 한 칸씩 올라가요.',40],
     ['뒤꿈치 들기','손잡이를 잡고 뒤꿈치를 올렸다 내려요.',20],
