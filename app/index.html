@@ -381,7 +381,7 @@ const CONFIG = {
   MODELS: { back:'', legs:'', neck:'', phone:'', sleepy:'', stress:'' },
   BASE_CLASS: '기본 자세',   // 아무 동작도 안 할 때의 클래스 이름
   THRESHOLD: 0.7,            // 이 확률 이상이면 자세 인정 (0.7 = 70%)
-  POSE_HELP: true,           // 자세 도우미: AI가 헷갈려 하는 날개뼈 모으기·팔 벌리기(승리 포즈)·무릎 들기·옆구리 늘리기를 관절 위치로 한 번 더 확인해요 (끄려면 false)
+  POSE_HELP: true,           // 자세 도우미: AI가 헷갈려 하는 날개뼈 모으기·팔 벌리기(승리 포즈)·무릎 들기·옆구리 늘리기·팔 위로(기지개)를 관절 위치로 한 번 더 확인해요 (끄려면 false)
   XP_LEARN: 2,               // 포인트: 배우기 모드 또는 타이머 동작 하나를 끝까지 했을 때
   XP_VERIFIED: 5,            // 포인트: 카메라로 자세 인증을 받은 동작 하나
   XP_BADGE: 20,              // 포인트: 배지 하나를 처음 받을 때 보너스
@@ -1077,31 +1077,41 @@ function countUp(el,to){
    true = 자세 맞음, false = 아님, null = 필요한 관절이 화면에 안 보임 */
 const POSE_HELP = (() => {
   const MIN = 0.25;
-  const P = (kp, n) => { const k = kp && kp.find(x => x.part === n); return k && k.score >= MIN ? k.position : null; };
+  const P = (kp, n, min = MIN) => { const k = kp && kp.find(x => x.part === n); return k && k.score >= min ? k.position : null; };
   const sub = (a, b) => ({x: a.x - b.x, y: a.y - b.y});
   const len = v => Math.hypot(v.x, v.y);
   const deg = r => r * 180 / Math.PI;
   const clamp1 = v => Math.max(-1, Math.min(1, v));
   const fromDown = v => deg(Math.acos(clamp1(v.y / (len(v) || 1))));          /* 0 = 아래, 90 = 옆, 180 = 위 */
   const between = (a, b) => deg(Math.acos(clamp1((a.x * b.x + a.y * b.y) / ((len(a) * len(b)) || 1))));
-  function arms(kp){
-    const s = [P(kp, 'leftShoulder'), P(kp, 'rightShoulder')];
+  function arms(kp, min = MIN){
+    const s = [P(kp, 'leftShoulder', min), P(kp, 'rightShoulder', min)];
     if(!s[0] || !s[1]) return null;
-    return {s, e: [P(kp, 'leftElbow'), P(kp, 'rightElbow')], w: [P(kp, 'leftWrist'), P(kp, 'rightWrist')],
+    return {s, e: [P(kp, 'leftElbow', min), P(kp, 'rightElbow', min)], w: [P(kp, 'leftWrist', min), P(kp, 'rightWrist', min)],
       mid: {x: (s[0].x + s[1].x) / 2, y: (s[0].y + s[1].y) / 2}, sw: len(sub(s[0], s[1]))};
   }
   const RULES = {
-    /* W 날개: 위팔은 옆으로 내려가고(팔꿈치가 어깨보다 바깥), 아래팔은 위로 */
-    '날개뼈 모으기': kp => { const A = arms(kp); if(!A) return null; let ok = 0;
+    /* W 날개(11/11 밤 넓힘): 두 팔꿈치는 어깨 높이 근처나 아래, 아래팔은 위로 세워요(팔꿈치를 뒤로 당겨도 인정) */
+    '날개뼈 모으기': kp => { const A = arms(kp, 0.15); if(!A) return null; let ok = 0;
       for(const i of [0, 1]){ const S = A.s[i], E = A.e[i], W = A.w[i]; if(!E || !W) return null;
-        const ua = sub(E, S), fa = sub(W, E), side = Math.sign(S.x - A.mid.x) || 1, eUA = fromDown(ua);
-        if(eUA >= 15 && eUA <= 110 && (E.x - A.mid.x) * side >= Math.abs(S.x - A.mid.x) * 0.7 && fa.y < 0 && 180 - fromDown(fa) <= 55) ok++; }
+        const fa = sub(W, E), up = -fa.y;
+        if(up >= 0.18 * A.sw && 180 - fromDown(fa) <= 65 && E.y >= S.y - 0.4 * A.sw) ok++; }
       return ok === 2; },
     /* 팔 벌리기(가슴 활짝·승리 포즈): 두 팔을 옆이나 V로 쭉 펴서 바깥으로 */
     '팔 벌리기': kp => { const A = arms(kp); if(!A) return null; let ok = 0;
       for(const i of [0, 1]){ const S = A.s[i], E = A.e[i], W = A.w[i]; if(!E || !W) return null;
         const ua = sub(E, S), fa = sub(W, E), side = Math.sign(S.x - A.mid.x) || 1, eUA = fromDown(ua);
         if(eUA >= 60 && eUA <= 170 && between(ua, fa) <= 55 && (W.x - A.mid.x) * side >= A.sw * 1.1) ok++; }
+      return ok === 2; },
+    /* 기지개(깍지 끼고 위로 쭉): 두 손목이 머리보다 위. 손이 화면 위로 나가면 팔꿈치가 어깨보다 확실히 위면 인정 */
+    '팔 위로': kp => { const A = arms(kp, 0.15); if(!A) return null;
+      const hs = ['nose', 'leftEye', 'rightEye'].map(n => P(kp, n, 0.15)).filter(Boolean);
+      const headY = hs.length ? Math.min(...hs.map(p => p.y)) : Math.min(A.s[0].y, A.s[1].y) - 0.8 * A.sw;
+      let ok = 0;
+      for(const i of [0, 1]){ const S = A.s[i], E = A.e[i], W = A.w[i];
+        if(W){ if(W.y < headY - 0.1 * A.sw && (!E || E.y < S.y - 0.2 * A.sw)) ok++; }
+        else if(E){ if(E.y < S.y - 0.35 * A.sw) ok++; }
+        else return null; }
       return ok === 2; },
     /* 한 발 균형: 한쪽 무릎이 다른 무릎보다 확실히 위 (앞으로 들면 허벅지가 짧아 보여요) */
     '무릎 들기': kp => { const h = [P(kp, 'leftHip'), P(kp, 'rightHip')], k = [P(kp, 'leftKnee'), P(kp, 'rightKnee')];
@@ -1126,7 +1136,7 @@ const POSE_HELP = (() => {
   };
   /* 화면에 꼭 보여야 하는 관절과 안 보일 때 안내 */
   const NEED = {'무릎 들기': '무릎까지 보이게 한두 걸음 뒤로 가요', '날개뼈 모으기': '두 팔이 다 보이게 조금 뒤로 가요',
-    '팔 벌리기': '두 팔이 다 보이게 조금 뒤로 가요', '옆구리 늘리기': '머리와 두 팔이 다 보이게 조금 뒤로 가요'};
+    '팔 벌리기': '두 팔이 다 보이게 조금 뒤로 가요', '팔 위로': '두 팔이 다 보이게 조금 뒤로 가요', '옆구리 늘리기': '머리와 두 팔이 다 보이게 조금 뒤로 가요'};
   function check(cls, pose){ const f = RULES[cls]; if(!f || !pose || !pose.keypoints) return null;
     try{ return f(pose.keypoints); }catch(e){ return null; } }
   return {check, has: cls => !!RULES[cls], need: cls => NEED[cls] || ''};
@@ -1137,7 +1147,8 @@ function helpPose(cur,pose,preds){
   if(!CONFIG.POSE_HELP||!POSE_HELP.has(cur.pose)||!preds) return;
   const r=POSE_HELP.check(cur.pose,pose), now=performance.now();
   if(r===null){ if(!UI.unseen) UI.unseen=now; } else UI.unseen=0;
-  if(r===true){ const tp=preds.find(x=>x.className===cur.pose); if(tp&&tp.probability<.95){ tp.probability=.95; UI.help=true; } }
+  if(r===true) UI.helpAt=now;   /* 한두 장면 놓쳐도 0.7초는 이어서 인정해요(깜빡임 방지) */
+  if(UI.helpAt&&now-UI.helpAt<700){ const tp=preds.find(x=>x.className===cur.pose); if(tp&&tp.probability<.95){ tp.probability=.95; UI.help=true; } }
 }
 const poseHint=cur=>CONFIG.POSE_HELP&&UI.unseen&&performance.now()-UI.unseen>2000?POSE_HELP.need(cur.pose):'';
 const P={model:null,url:'',classes:[],webcam:null,loaded:new Set()};
@@ -1499,7 +1510,7 @@ async function startMode(mode){
       catch(e){ stopCam(); UI.err='카메라를 켜지 못했어요. 주소창 옆의 카메라 권한을 "허용"으로 바꾸고 다시 시도해 주세요.'; return render(); }
     }
   }
-  Object.assign(UI,{list,idx:0,held:0,hist:[],results:[],running:true,paused:false,okPrev:false,matchedOnce:false,spoke5:false,unseen:0,help:false,screen:'play'});
+  Object.assign(UI,{list,idx:0,held:0,hist:[],results:[],running:true,paused:false,okPrev:false,matchedOnce:false,spoke5:false,unseen:0,help:false,helpAt:0,screen:'play'});
   render(); vsStart(); announce(true);
   UI.last=performance.now(); requestAnimationFrame(loop);
 }
@@ -1596,7 +1607,7 @@ async function loop(t){
   requestAnimationFrame(loop);
 }
 function advance(){
-  UI.idx++; Object.assign(UI,{held:0,hist:[],okPrev:false,matchedOnce:false,spoke5:false,unseen:0,help:false});
+  UI.idx++; Object.assign(UI,{held:0,hist:[],okPrev:false,matchedOnce:false,spoke5:false,unseen:0,help:false,helpAt:0});
   if(UI.idx>=UI.list.length) return finishPlay();
   if(UI.list[UI.idx].set!==UI.list[UI.idx-1].set) vsNewSet();   /* 새 세트: 영상도 처음부터 */
   else vsAlign();   /* 건너뛰었으면 영상도 다음 동작으로 */
